@@ -204,8 +204,23 @@ meters. Group the data by `sex` and calculate the mean of each variable
 for each group. Create a bar plot to visualize the mean values for each
 variable by `sex`.
 
-``` r
-df %>% ... # Insert your code here
+``` {r}
+df %>% 
+  filter(length >= 0.5) %>%
+```
+```{r}
+df1 <- df %>% 
+  group_by(sex) %>%
+  summarise(avglen = mean(length),
+            avgdiam = mean(diameter),
+            avght = mean(height),
+            avgww = mean(whole_weight),
+            avgshuw = mean(shucked_weight),
+            avgvw = mean(viscera_weight),
+            avgshew = mean(shell_weight),
+            avgrs = mean(rings)
+)
+df1
 ```
 
 ------------------------------------------------------------------------
@@ -230,8 +245,9 @@ Implement the following in a **single command**:
     vs `sex` with the color indicating of each tile indicating the
     `avg_weight` value.
 
-``` r
-df %>% ... # Insert your code here
+``` {r}
+df %>% 
+  mutate(num_rings = if(rings < 10), num_rings = "low"), if(rings > 20, "high"), if(20>=rings>=10, "med")
 ```
 
 ------------------------------------------------------------------------
@@ -244,8 +260,12 @@ like this [^3]
 
 [^3]: Table for 2.3<br>
 
-``` r
-df %>% ... # Insert your code here
+``` {r}
+df %>% 
+  keep(is.numeric) %>%
+  cor() %>%
+  knitr::kable()
+  
 ```
 
 ------------------------------------------------------------------------
@@ -262,8 +282,10 @@ grid of plots.
 ![](images/plot_grid.png)
 :::
 
-``` r
-... # Insert your code here
+``` {r}
+x <- df$rings 
+y <- df$length
+map2(.x = x, .y = y, colour = sex)
 ```
 
 <br><br><br><br> <br><br><br><br> ---
@@ -284,10 +306,13 @@ Perform a simple linear regression with `diameter` as the covariate and
 `height` as the response. Interpret the model coefficients and their
 significance values.
 
-``` r
-... # Insert your code here
+``` {r}
+x <- df$diameter
+y <- df$height
+model <- lm(y ~ x)
+summary(model)
 ```
-
+The coefficient for intercept suggests that if the diameter is 0, the height would be -0.003784. The coefficient for x suggests that if diameter increases by 1, height should increase by 0.351346.The significant values are both less than 0.05, so it suggests we should reject the null hypothesis and say that these are the true values for y-intercept and slope.
 ------------------------------------------------------------------------
 
 ###### 3.2 (10 points)
@@ -297,10 +322,11 @@ line in `color="red"`. You can use the base `plot()` function in R for
 this. Is the linear model an appropriate fit for this relationship?
 Explain.
 
-``` r
-... # Insert your code here
+``` {r}
+plot(x,y, xlab = "diameter", ylab = "height")
+abline(lm(y ~ x), col = "red")
 ```
-
+This linear model is appropriate as the points are heavily correlated in a linear fashion.
 ------------------------------------------------------------------------
 
 ###### 3.3 (10 points)
@@ -310,7 +336,7 @@ Suppose we have collected observations for "new" abalones with
 `height` based on your model above? Plot these new observations along
 with your predictions in your plot from earlier using `color="violet"`
 
-``` r
+``` {r}
 
 new_diameters <- c(
   0.15218946,
@@ -326,7 +352,20 @@ new_diameters <- c(
 )
 
 
-... # Insert your code here. 
+new_heights <- c(
+  0.04968716,
+  0.16613236,
+  0.20033226,
+  0.02293125,
+  0.17271325,
+  0.28945672,
+  0.33239066,
+  0.32264959,
+  0.32734357,
+  0.00046559
+)
+
+plot(new_diameters, new_heights, col = "violet")
 ```
 
 ::: {.hidden unless-format="pdf"}
